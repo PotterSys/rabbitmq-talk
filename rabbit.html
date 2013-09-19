@@ -1,0 +1,454 @@
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>RabbitMQ</title>
+  <style type="text/css">
+    body {
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  color: #444;
+  background-color: #aaa;
+}
+
+#wrapper {
+  width: 850px;
+  height: 600px;
+  overflow: hidden;
+  margin: 80px auto 0 auto;
+  box-shadow: 3px 3px 3px #666;
+}
+
+/* styles for print layout */
+#wrapper.nohide {
+  overflow: auto;
+  height: auto;
+  box-shadow: none;
+}
+
+#wrapper.nohide .slide {
+  margin-bottom: 30px;
+}
+/* /styles */
+
+.slide {
+  width: auto;
+  height: 540px;
+  padding: 30px;
+  font-weight: 200;
+  font-size: 32px;
+  line-height: 44px;
+  background-color: #eee;
+}
+
+#controls {
+  width: 850px;
+  margin: -60px auto 0 auto;
+}
+
+#controls div {
+  width: 50px;
+  height: 50px;
+  padding: 5px 50px;
+  font-size: 36px;
+  background-color: #ccc;
+}
+
+#controls div:hover {
+  background-color: #bbb;
+  cursor: pointer;
+}
+
+#controls #prev {
+  float: left;
+  -webkit-border-top-right-radius: 20px;
+  -moz-border-radius-topright: 20px;
+  border-top-right-radius: 20px;
+
+  /* Fix selection bug */
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+#controls #next {
+  float: right;
+  text-align: right;
+  -webkit-border-top-left-radius: 20px;
+  -moz-border-radius-topleft: 20px;
+  border-top-left-radius: 20px;
+
+  /* Fix selection bug */
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+.slide h1 {
+  font-size: 100px;
+  text-align: center;
+  margin-top: 200px;
+  margin-bottom: 30px;
+}
+
+.slide h2 {
+  font-size: 30px;
+  text-align: center;
+  font-weight: 200;
+}
+
+.slide h3 {
+  font-size: 45px;
+  border-bottom: 1px solid #aaa;
+  margin: 0;
+  padding-bottom: 15px;
+}
+
+.slide ul {
+  padding: 20px 0 0 60px;
+  font-weight: 200;
+  font-size: 32px;
+  line-height: 44px;
+}
+
+.slide .author h1.name {
+  font-size: 55px;
+  font-weight: 200;
+  text-align: center;
+  margin-top: 185px;
+  margin-bottom: 30px;
+}
+
+.slide .author h3 {
+  font-weight: 100;
+  text-align: center;
+  font-size: 30px;
+  border: none;
+}
+
+a {
+  text-decoration: none;
+  color: #44a4dd;
+}
+
+a:hover {
+  color: #66b5ff;
+}
+
+code {
+  background-color: #ccc;
+}
+
+pre > code {
+  background-color: inherit;
+  font-size: 60%;
+  line-height: 1.3;
+}
+
+.hidden {
+  display: none;
+}
+
+
+    
+  </style>
+</head>
+<body>
+  <div id="wrapper">
+    <section class="slide"><h1>RabbitMQ</h1>
+
+<h2>(How to make messages, win friends, and influence services)</h2></section>
+    <section class="slide"><h3>What you should take away</h3>
+
+<ol>
+<li>RabbitMQ is a pretty awesome</li>
+<li>How it works</li>
+<li>How to think in terms of messaging topologies to solve problems</li>
+</ol></section>
+    <section class="slide"><h3>Rabbit, What?</h3>
+
+<blockquote>
+  <p>RabbitMQ is open source message broker software (i.e., message-oriented middleware) that implements the Advanced Message Queuing Protocol (AMQP) standard.
+  The RabbitMQ server is written in Erlang and is built on the Open Telecom Platform framework for clustering and failover.
+  <cite> --wikipedia </cite></p>
+</blockquote></section>
+    <section class="slide"><p><img src="./images/words.jpg" style="margin-left: auto; margin-right: auto; display: block"/></p></section>
+    <section class="slide"><h3>Not that difficult</h3>
+
+<ul>
+<li>Messages - you know, messages!</li>
+<li>Broker - Takes care of things on your behalf</li>
+<li>AMQP - a spec which RabbitMQ happens to implement (kinda)</li>
+<li>Erlang - fancy!</li>
+<li>Open Telecom Platform - read as "fault tolerant and scalable"</li>
+<li>clustering and failover - read as "fault tolerant and scalable"</li>
+</ul></section>
+    <section class="slide"><h3>In other words</h3>
+
+<p>Rabbit is really good at dealing with messages and messaging
+patterns that allow you to do cool things.</p>
+
+<p>It also happens to be able to do these things in a really
+fast, scalable, and fault tolerant way</p></section>
+    <section class="slide"><h3>Why can't I use HTTP?</h3>
+
+<ul>
+<li>HTTP is awesome!</li>
+<li><em>(in a request response cycle)</em></li>
+<li>However, it lacks <strong>flow control</strong>
+<ul><li>Back pressure, retries, acknowledgements</li>
+<li>RabbitMQ, however, has these things</li></ul></li>
+</ul></section>
+    <section class="slide"><h3>Demo Time</h3>
+
+<p>Say that I generate resources based upon a third-pary stream of data.</p>
+
+<p>Two Approaches:</p>
+
+<ol>
+<li>POST it over HTTP</li>
+<li>Work Queue</li>
+</ol></section>
+    <section class="slide"><h3>Vocab</h3>
+
+<p>In order to understand rabbit, you need some vocab:</p>
+
+<ul>
+<li>Publishers - clients who connect to rabbit and write messages</li>
+<li>Consumers - clients who connect to rabbit and get messages from it</li>
+<li>Brokers - the broker take messages from <strong>publishers</strong> and route them to <strong>consumers</strong></li>
+</ul>
+
+<p style="font-size:16px"> NOTE: a single client can be both a consumer and a publisher </p></section>
+    <section class="slide"><h3>Parts</h3>
+
+<p>The routing of messages is the core thing rabbit does for you. It uses some key parts to make that happen:</p>
+
+<ul>
+<li>Queues - a container for messages, <strong>consumers</strong> connect to queues to read messages</li>
+<li>Exchanges - <strong>publishers</strong> write messages to exchanges, exchanges write messages to <strong>queues</strong> based upon <strong>bindings</strong></li>
+<li>Bindings - a binding connects a queue to an exchange</li>
+</ul></section>
+    <section class="slide"><h3>Topics and Bindings</h3>
+
+<p>The flexibility and power of RabbitMQ comes from <strong>bindings</strong></p>
+
+<ul>
+<li>Every message in RabbitMQ is given a <strong>topic</strong></li>
+<li>This topic defines what the message pertains to and is namespaced via periods</li>
+<li>EX:myservice.v1.myresource.update</li>
+<li>Totally arbitrary</li>
+</ul>
+
+<p><span style="font-size:14px"> NOTE: The bindings you can use depends on the type of <strong>exchange</strong> you are using. The most flexible is a topic exchange and is what we are covering here </span></p></section>
+    <section class="slide"><h3>Topics and Bindings</h3>
+
+<p>When a <strong>queue</strong> wants messages routed to it, it defines a <strong>binding</strong> with a <strong>key</strong> that defines a pattern for messages
+to be routed to it.</p>
+
+<ul>
+<li>EX: myservice.v1.myresource.update is ALSO a key, that exactly matches the topic</li>
+<li>There are two special pattern matching helpers
+<ul><li>*</li>
+<li>#</li></ul></li>
+</ul></section>
+    <section class="slide"><h3>*</h3>
+
+<p>The * masks out a single namespace</p>
+
+<ul>
+<li>EX: myservice.v1.*.update
+<ul><li>myservice.v1.foo.update, myservice.v1.bar.update both match</li>
+<li>myserivce.v1.foo.bar.update would NOT match</li></ul></li>
+</ul></section>
+    <section class="slide"><h3>#</h3>
+
+<p>The # masks out all namespaces that follow</p>
+
+<ul>
+<li>EX: myservice.v1.#
+<ul><li>myservice.v1.foo.bar.baz, myservice.v1.so.long.ah would both match</li>
+<li>myservice.v1 would NOT match</li></ul></li>
+</ul></section>
+    <section class="slide"><h3>Messaging Topologies</h3>
+
+<p>With this simple pattern matching, we can model lots of different topologies</p>
+
+<ul>
+<li>Work Queues (obviously)</li>
+<li>Fanout (broadcast)</li>
+<li>PubSub</li>
+<li>Message Routing</li>
+<li>RPC</li>
+</ul></section>
+    <section class="slide"><h3>Work Queues</h3>
+
+<p>Attach multiple consumers to a single queue in order to do work
+<img src="./images/work-queue.png" alt="Work Queue" title="" /></p>
+
+<p>(You saw this demo already)</p></section>
+    <section class="slide"><h3>Fanout/PubSub</h3>
+
+<p><img src="./images/fanout.png" alt="Fanout" title="" /></p>
+
+<p>(they are almost the same thing...)</p></section>
+    <section class="slide"><h3>Message Routing</h3>
+
+<p>(insert image here)</p></section>
+    <section class="slide"><h3>Knobs</h3>
+
+<p>RabbitMQ has TONS of knobs.</p>
+
+<p>That is where distributor comes in. It is opinionated and sets tons of options for you with a much nicer API than raw node-amqp.</p>
+
+<p>They should be good 80% of the time, but when not, here is a quick walthrough</p></section>
+    <section class="slide"><h3>Fin</h3>
+
+<p>One thing that I have started doing when solving a problem is ask myself this question:</p>
+
+<blockquote>
+  <p>Does this need to be inside a request-response cycle?
+  If not, perhaps a messaging model with rabbit is the right fit</p>
+</blockquote>
+
+<p>Go forth, use rabbit.</p></section>
+    <section class="slide"><div class="author">
+  <h1 class="name">Addison</h1>
+  <h3 class="twitter">
+    <a href="http://twitter.com/@addisonj" tabindex="-1">@addisonj</a>
+  </h3>
+  <h3 class="url">
+    <a href="" tabindex="-1"></a>
+  </h3>
+</div>
+</section>
+</div>
+
+<script type="text/javascript">
+  /**
+ * Takes the last slide and places it at the front.
+ */
+function goBack() {
+  var wrapper = document.querySelector('#wrapper');
+  var lastSlide = wrapper.lastChild;
+  while (lastSlide != null && lastSlide.nodeType !== 1) {
+    lastSlide = lastSlide.previousSibling;
+  }
+
+  wrapper.removeChild(lastSlide);
+  wrapper.insertBefore(lastSlide, wrapper.firstChild);
+
+  updateURL();
+}
+
+/**
+ * Takes the first slide and places it at the end.
+ */
+function goForward() {
+  var wrapper = document.querySelector('#wrapper');
+  var firstSlide = wrapper.firstChild;
+  while (firstSlide != null && firstSlide.nodeType !== 1) {
+    firstSlide = firstSlide.nextSibling;
+  }
+
+  wrapper.removeChild(firstSlide);
+  wrapper.appendChild(firstSlide);
+
+  updateURL();
+}
+
+/**
+ * Updates the current URL to include a hashtag of the current page number.
+ */
+function updateURL() {
+  window.history.replaceState({} , null, '#' + currentPage());
+}
+
+/**
+ * Returns the current page number of the presentation.
+ */
+function currentPage() {
+  return document.querySelector('#wrapper .slide').dataset.page;
+}
+
+/**
+ * Returns a NodeList of each .slide element.
+ */
+function allSlides() {
+  return document.querySelectorAll('#wrapper .slide');
+}
+
+/**
+ * Give each slide a "page" data attribute.
+ */
+function setPageNumbers() {
+  var wrapper = document.querySelector('#wrapper');
+  var pages   = wrapper.querySelectorAll('section');
+  var page;
+
+  for (var i = 0; i < pages.length; ++i) {
+    page = pages[i];
+    page.dataset.page = i;
+  }
+}
+
+/**
+ * Go to the specified page of content.
+ */
+function goToPage(page) {
+  // Try to find the target slide.
+  var targetSlide = document.querySelector('#wrapper .slide[data-page="' + page + '"]');
+
+  // If it actually exists, go forward until we find it.
+  if (targetSlide) {
+    var numSlides = allSlides().length;
+
+    for (var i = 0; currentPage() != page && i < numSlides; i++) {
+      goForward();
+    }
+  }
+}
+
+window.onload = function () {
+
+  // Give each slide a "page" data attribute.
+  setPageNumbers();
+
+  // If the location hash specifies a page number, go to it.
+  var page = window.location.hash.slice(1);
+  if (page) goToPage(page);
+
+  document.onkeydown = function (e) {
+    var kc = e.keyCode;
+
+    // left, down, H, J, backspace - BACK
+    // up, right, K, L, space, enter - FORWARD
+    if (kc == 37 || kc == 40 || kc == 8 || kc == 72 || kc == 74) {
+      goBack();
+    } else if (kc == 38 || kc == 39 || kc == 13 || kc == 32 || kc == 75 || kc == 76) {
+      goForward();
+    }
+  }
+
+  if (document.querySelector('#next') && document.querySelector('#prev')) {
+    document.querySelector('#next').onclick = function (e) {
+      e.preventDefault();
+      goForward();
+    }
+
+    document.querySelector('#prev').onclick = function (e) {
+      e.preventDefault();
+      goBack();
+    }
+  }
+
+}
+
+</script>
+
+</body>
+</html>

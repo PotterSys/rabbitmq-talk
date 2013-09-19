@@ -1,0 +1,17 @@
+{
+  "name": "demo",
+  "version": "0.0.0",
+  "description": "ERROR: No README.md file found!",
+  "main": "hello.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": "",
+  "author": "",
+  "license": "BSD",
+  "dependencies": {
+    "distributor": "~0.4.0",
+    "request": "~2.27.0",
+    "express": "~3.4.0"
+  }
+}

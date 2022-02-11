@@ -10,6 +10,10 @@ controls: false
 # RabbitMQ
 ## (How to make messages, win friends, and influence services)
 
+Slides published on https://pottersys.github.io/rabbitmq-talk
+(yes, lazy af)
+
+
 --
 ### What you should take away
 1. RabbitMQ is a pretty awesome
